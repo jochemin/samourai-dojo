@@ -114,6 +114,7 @@ uninstall() {
   docker image rm samouraiwallet/dojo-nodejs:"$DOJO_NODEJS_VERSION_TAG"
   docker image rm samouraiwallet/dojo-nginx:"$DOJO_NGINX_VERSION_TAG"
   docker image rm samouraiwallet/dojo-tor:"$DOJO_TOR_VERSION_TAG"
+  docker image rm samouraiwallet/dojo-explorer:"$DOJO_EXPLORER_VERSION_TAG"
 
   docker volume prune
 }
@@ -136,6 +137,7 @@ clean() {
   del_images_for samouraiwallet/dojo-nodejs "$DOJO_NODEJS_VERSION_TAG"
   del_images_for samouraiwallet/dojo-nginx "$DOJO_NGINX_VERSION_TAG"
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-explorer:"$DOJO_EXPLORER_VERSION_TAG"
 }
 
 # Upgrade
@@ -168,9 +170,11 @@ upgrade() {
 onion() {
   V2_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv2dojo/hostname )
   V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
+  V3_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv3explorer/hostname )
   
   echo "API hidden service address (v3) = $V3_ADDR"
   echo "API hidden service address (v2) = $V2_ADDR"
+  echo "explorer hidden service address (v3) = $V3_ADDR_EXPLORER" 
 
   if [ "$BITCOIND_INSTALL" == "on" ]; then
     V2_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv2bitcoind/hostname )
@@ -220,7 +224,7 @@ logs() {
       ;;
     * )
       yamlFiles=$(select_yaml_files)
-      services="nginx node tor db" 
+      services="nginx node tor db explorer" 
       if [ "$BITCOIND_INSTALL" == "on" ]; then
         services="$services bitcoind"
       fi

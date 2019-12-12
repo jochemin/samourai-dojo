@@ -5,6 +5,8 @@ set -e
 echo "## Set permissions on /var/lib/tor dir ###"
 chmod 750 /var/lib/tor
 
+
+
 echo "## Start tor #############################"
 
 tor_options=(
@@ -23,6 +25,9 @@ tor_options=(
   --HiddenServiceVersion 2
   --HiddenServicePort "8333 172.28.1.5:8333"
   --HiddenServiceDirGroupReadable 1
+  --HiddenServiceDir /var/lib/tor/hsv3explorer
+  --HiddenServiceVersion 3
+  --HiddenServicePort "80 172.29.1.6:3002"
 )
 
 if [ "$TOR_USE_BRIDGES" == "on" ]; then
