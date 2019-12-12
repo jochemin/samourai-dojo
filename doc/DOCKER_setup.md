@@ -36,24 +36,24 @@ MyDojo is a set of Docker containers providing a full Samourai backend composed 
                                           ------------
                                                 |
                   Host machine                  | (Tor hidden services)
-                 ______________________________ | _____________________________
-                |                               |                              |
-                |                      -------------------                     |
-                |                     |   Tor Container   |                    |
-                |                      -------------------                     |
-                |                             |        |                       |
-                |             -------------------      |                       |
-                |            |  Nginx Container  |     |             dmznet    |
-                |             -------------------      |                       |
-                |- - - - - - - - - - - | - - - - - - - | - - - - - - - - - - - |
-                |     --------------------          --------------------       |
-                |    |  Nodejs Container  | ------ | Bitcoind Container |      |
-                |     --------------------          --------------------       |
-                |               |                                              |
-                |    -------------------                                       |
-                |   |  MySQL Container  |                           dojonet    |
-                |    -------------------                                       |
-                |______________________________________________________________|
+                 ______________________________ | ___________________________________________________________________
+                |                               |                                                                    |
+                |                      -------------------                                                           |
+                |                     |   Tor Container   | - - - - - - - - - - - - - - - -                          |
+                |                      -------------------                                 |                         |
+                |                             |        |                                   |                         |
+                |             -------------------      |                                   |                         |
+                |            |  Nginx Container  |     |                     dmznet        |                         |
+                |             -------------------      |                                   |                         |
+                |- - - - - - - - - - - | - - - - - - - | - - - - - - - - - - - - - - - - - | - - - - - - - - - - - - |
+                |     --------------------          --------------------          ----------------------------       |
+                |    |  Nodejs Container  | ------ | Bitcoind Container | ------ | BTC-RPC-Explorer Container |      |
+                |     --------------------          --------------------          ----------------------------       |
+                |               |                                                                                    |
+                |    -------------------                                                                             |
+                |   |  MySQL Container  |                           dojonet                                          |
+                |    -------------------                                                                             |
+                |____________________________________________________________________________________________________|
 
 
 <a name="requirements"/>
@@ -78,6 +78,7 @@ Each new release of Dojo is packaged with 4 template files stored in the `<dojo_
 - docker-bitcoin.conf.tpl
 - docker-mysql.conf.tpl
 - docker-node.conf.tpl
+- docker-explorer.conf.tpl
 
 These template files define default values for configuration options of your Dojo.
 
@@ -127,6 +128,10 @@ This procedure allows to install a new Dojo from scratch.
       * `MYSQL_ROOT_PASSWORD` = password protecting the root account of MySQL,
       * `MYSQL_USER` = login of the account used to access the database of your Dojo,
       * `MYSQL_PASSWORD` = password of the account used to access the database of your Dojo.
+      
+  * Edit docker-explorer.conf.tpl and provide a new value for the following parameters:
+      * `BTCEXP_BITCOIND_USER` = login protecting the access to the RPC API of your full node,
+      * `BTCEXP_BITCOIND_PASS` = password protecting the access to the RPC API of your full node.
 
   * Edit docker-node.conf.tpl and provide a new value for the following parameters:
       * `NODE_API_KEY` = API key which will be required from your Samourai Wallet / Sentinel for its interactions with the API of your Dojo,
@@ -163,7 +168,7 @@ Docker and Docker Compose are going to build the images and containers of your D
 Exit the logs with CTRL+C when the syncing of the database has completed.
 
 
-* Retrieve the Tor onion addresses (v2 and v3) of the API of your Dojo
+* Retrieve the Tor onion addresses (v2 and v3) of the API of your Dojo and the explorer
 
 ```
 ./dojo.sh onion
